@@ -21,7 +21,60 @@
 #include "adc.h"
 
 /* USER CODE BEGIN 0 */
+volatile uint16_t adc_buffer[ADC_BUFFER_SIZE];
 
+#pragma GCC push_options
+#pragma GCC optimize ("Ofast")
+void ADC_Average(uint16_t* buf)
+{
+    for(int c = 0; c < ADC_CHANNELS; ++c)
+    {
+        uint32_t acc = 0;
+        for(int i = 0; i < ADC_SAMPLES; ++i)
+        {
+            acc += buf[c + (i * ADC_CHANNELS)];
+        }
+        v.ADC[c] = (acc + (1<<(ADC_BIN_SHIFT - 1))) >> ADC_BIN_SHIFT;
+    }
+}
+#pragma GCC pop_options
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+{
+    ADC_Average((uint16_t*)&adc_buffer[ADC_DATA_SIZE]);
+}
+
+void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
+{
+    ADC_Average((uint16_t*)&adc_buffer[0]);
+}
+
+void ADC_Start(void)
+{
+    HAL_ADCEx_Calibration_Start(&hadc1);
+    HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_buffer, ADC_BUFFER_SIZE);
+}
+
+// Расчет напряжения питания из VREFINT
+float Calculate_VDD(uint16_t vrefint_adc)
+{
+    // VREFINT имеет фиксированное напряжение 1.20V
+    // Измеренное значение обратно пропорционально VDD
+    // VDD = (4095 * 1.20V) / ADC_value
+    if(vrefint_adc == 0) return 0.0f;
+    return (4095.0f * VREFINT_TYP) / (float)vrefint_adc;
+}
+
+// Расчет температуры
+float Calculate_Temperature(uint16_t temp_adc, float current_vdd)
+{
+    // Сначала переводим ADC значение в напряжение с учетом реального VDD
+    float vsense = ((float)temp_adc * current_vdd) / 4095.0f;
+
+    // Формула из даташита: T = 25 + (V25 - VSENSE) / Avg_Slope
+    // V25 = 1.43V при 25°C, Avg_Slope = 4.3 mV/°C = 0.0043 V/°C
+    return 25.0f + ((V25 - vsense) / AVG_SLOPE);
+}
 /* USER CODE END 0 */
 
 ADC_HandleTypeDef hadc1;
@@ -49,7 +102,7 @@ void MX_ADC1_Init(void)
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.NbrOfConversion = 5;
+  hadc1.Init.NbrOfConversion = 6;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
   {
     Error_Handler();
@@ -85,7 +138,7 @@ void MX_ADC1_Init(void)
 
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_TEMPSENSOR;
+  sConfig.Channel = ADC_CHANNEL_3;
   sConfig.Rank = ADC_REGULAR_RANK_4;
   sConfig.SamplingTime = ADC_SAMPLETIME_239CYCLES_5;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
@@ -95,8 +148,17 @@ void MX_ADC1_Init(void)
 
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_VREFINT;
+  sConfig.Channel = ADC_CHANNEL_TEMPSENSOR;
   sConfig.Rank = ADC_REGULAR_RANK_5;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure Regular Channel
+  */
+  sConfig.Channel = ADC_CHANNEL_VREFINT;
+  sConfig.Rank = ADC_REGULAR_RANK_6;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();

@@ -71,7 +71,7 @@ typedef struct
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
-
+extern var_t v;
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/

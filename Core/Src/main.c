@@ -215,7 +215,7 @@ int main(void)
 
   can_node_valves_bus0_init(xcp_used_mbxs(), 0, 0, &can_out, &can_in);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-//  ADC_Start();
+  ADC_Start();
 
   __enable_irq();
   /* USER CODE END 2 */
@@ -227,6 +227,8 @@ int main(void)
     xcp_can_poll();
     can_node_valves_bus0_rx(&can_in);
 
+    v.VCC = Calculate_VDD(v.ADC[ADC_VCC]);
+    v.CPU_temp = Calculate_Temperature(v.ADC[ADC_TEMP], v.VCC);
 
     can_node_valves_bus0_tx(&can_out);
     /* USER CODE END WHILE */

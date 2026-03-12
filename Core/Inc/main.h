@@ -31,15 +31,20 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "math.h"
 #include "meta.h"
 #include "can_platform.h"
 #include "xcp_client_can.h"
 #include "xcp_platform.h"
 #include "common_param.h"
+
+#include "can_node_valves_bus0.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+#define SERVOS_NUMBER   8
+
 typedef struct
 {
     uint32_t update_boot;   //0x20003C00
@@ -49,7 +54,7 @@ typedef struct
     uint16_t ADC[8];        //0x20003C10, 0x20003C12, 0x20003C14, 0x20003C16,..., 0x20003C1E
     float CPU_temp;         //0x20003C20
     float VCC;              //0x20003C24
-    uint16_t servo_us[8];   //0x20003C28, 0x20003C2A, 0x20003C2C, 0x20003C2E,..., 0x20003C26
+    uint16_t servo_us[SERVOS_NUMBER];   //0x20003C28, 0x20003C2A, 0x20003C2C, 0x20003C2E,..., 0x20003C26
 
 
 } var_t;
@@ -59,6 +64,8 @@ typedef struct
     common_param_t common;
     uint32_t crc;
     uint32_t size;
+    uint16_t servo_close_us[SERVOS_NUMBER];
+    uint16_t servo_open_us[SERVOS_NUMBER];
 } param_t;
 /* USER CODE END ET */
 

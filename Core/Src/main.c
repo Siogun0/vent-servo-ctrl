@@ -78,7 +78,9 @@ const param_t param_def =
     .common.id = 0,
 
     .crc = 0,
-    .size = sizeof(param_t) - sizeof(common_param_t)
+    .size = sizeof(param_t) - sizeof(common_param_t),
+    .servo_close_us = {1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000},
+    .servo_open_us = {2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000},
 };
 
 uint32_t xcp_base_id = XCP_BASE_ID;
@@ -88,6 +90,9 @@ extern uint32_t xcp_can_is_active;
 extern uint32_t _start_calib_ram[];
 extern uint32_t _end_calib_ram[];
 extern t_xcp_download_cb update_values;
+
+volatile t_can_node_valves_bus0_input can_in;
+volatile t_can_node_valves_bus0_output can_out;
 
 var_t __attribute__((section(".var_ram_sec"))) v;
 /* USER CODE END PV */
@@ -100,10 +105,26 @@ void load_param(void);
 void update_param_crc(uint32_t address);
 
 void deinit_perif(void) {};
+
+uint32_t get_servo_us(uint32_t position, uint32_t closed, uint32_t opened);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+void can_node_valve_status_cb(uint32_t id, uint64_t msg, uint32_t dlc)
+{
+    can_out.VALVE_STATUS.CPU_TEMP = roundf(v.CPU_temp);
+    can_out.VALVE_STATUS.V_3V3 = v.VCC;
+}
+
+void can_node_ctrl_to_valve_cb(uint32_t id, uint64_t msg, uint32_t dlc)
+{
+    v.servo_us[0] = get_servo_us(can_in.CTRL_TO_VALVE.VALVE_1_REQ, param.servo_close_us[0], param.servo_open_us[0]);
+    v.servo_us[1] = get_servo_us(can_in.CTRL_TO_VALVE.VALVE_2_REQ, param.servo_close_us[1], param.servo_open_us[1]);
+    v.servo_us[2] = get_servo_us(can_in.CTRL_TO_VALVE.VALVE_3_REQ, param.servo_close_us[2], param.servo_open_us[2]);
+    v.servo_us[3] = get_servo_us(can_in.CTRL_TO_VALVE.VALVE_4_REQ, param.servo_close_us[3], param.servo_open_us[3]);
+}
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
@@ -124,6 +145,22 @@ void HAL_CAN_RxFifo0FullCallback(CAN_HandleTypeDef *hcan)
 void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan)
 {
     return;
+}
+
+uint32_t get_servo_us(uint32_t position, uint32_t closed, uint32_t opened)
+{
+    uint32_t range = 0;
+    uint32_t shift = closed;
+    if(closed <= opened)
+    {
+        range = opened - closed;
+    }
+    else
+    {
+        range = closed - opened;
+        shift = opened;
+    }
+    return shift + position * range / 100;
 }
 /* USER CODE END 0 */
 
@@ -176,8 +213,8 @@ int main(void)
 
   update_values = update_param_crc;
 
-//  can_node_fan_ctrl_bus0_init(xcp_used_mbxs(), 0, 0, &can_out, &can_in);
-//  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+  can_node_valves_bus0_init(xcp_used_mbxs(), 0, 0, &can_out, &can_in);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 //  ADC_Start();
 
   __enable_irq();
@@ -188,6 +225,10 @@ int main(void)
   while (1)
   {
     xcp_can_poll();
+    can_node_valves_bus0_rx(&can_in);
+
+
+    can_node_valves_bus0_tx(&can_out);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

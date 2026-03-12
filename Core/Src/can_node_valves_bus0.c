@@ -9,6 +9,7 @@ static uint32_t __tx_id_shift__ = 0;
 static uint32_t __mb_shift__ = 0;
 static uint32_t multiplexor __attribute__ ((unused));
 
+static volatile uint32_t msg_cntr_ctrl_to_valve;
 static volatile uint32_t msg_cntr_valve_status;
 
 //====== Auxiliary functions ======
@@ -66,7 +67,9 @@ uint8_t can_node_valves_bus0_init(uint32_t mb_shift, uint32_t rx_id_shift, uint3
     
     platform_can_init_tx_mb(0, MBN_TX_VALVE_STATUS + __mb_shift__, 0x110 + __tx_id_shift__, 8);
     
+    platform_can_init_rx_mb(0, MBN_RX_CTRL_TO_VALVE + __mb_shift__, 0x41 + __rx_id_shift__, 8);
     
+    msg_cntr_ctrl_to_valve = 2 * ALIVE_THRESHOLD;
     
     msg_cntr_valve_status = 0;
     return(MBN_NEXT_FREE_BUS_0 );    
@@ -77,6 +80,22 @@ uint8_t can_node_valves_bus0_init(uint32_t mb_shift, uint32_t rx_id_shift, uint3
 void can_node_valves_bus0_rx(volatile t_can_node_valves_bus0_input *inp)
 {
     uint64_t msg;
+    
+    //CTRL_TO_VALVE
+    if(platform_can_is_message_arrived(0, MBN_RX_CTRL_TO_VALVE + __mb_shift__))
+    {
+        msg_cntr_ctrl_to_valve = 0;
+        
+        msg = platform_can_get_mb_data(0, MBN_RX_CTRL_TO_VALVE + __mb_shift__);
+        
+        inp->CTRL_TO_VALVE.VALVE_1_REQ = ((uint8_t)GetBits(msg, 0, 8));
+        inp->CTRL_TO_VALVE.VALVE_2_REQ = ((uint8_t)GetBits(msg, 8, 8));
+        inp->CTRL_TO_VALVE.VALVE_3_REQ = ((uint8_t)GetBits(msg, 16, 8));
+        inp->CTRL_TO_VALVE.VALVE_4_REQ = ((uint8_t)GetBits(msg, 24, 8));
+        
+        can_node_ctrl_to_valve_cb(0x41 + __rx_id_shift__, msg, 8);
+    }
+    inp->alive.ctrl_to_valve = msg_cntr_ctrl_to_valve >= ALIVE_THRESHOLD * MSG_CYCLE_CTRL_TO_VALVE ? 0 : 1;
     
 }
 
@@ -94,7 +113,7 @@ void can_node_valves_bus0_tx(volatile t_can_node_valves_bus0_output *out)
         
         msg = 0;
         
-        platform_can_valve_status_cb(0x110 + __tx_id_shift__, msg, 8);
+        can_node_valve_status_cb(0x110 + __tx_id_shift__, msg, 8);
         
         //Sinals
         msg |= SetBits(0, 4, (out->VALVE_STATUS.VALVE_1));
@@ -104,6 +123,7 @@ void can_node_valves_bus0_tx(volatile t_can_node_valves_bus0_output *out)
         msg |= SetBits(40, 8, (out->VALVE_STATUS.CPU_TEMP - -40) * (1 / 1));
         msg |= SetBits(48, 8, (out->VALVE_STATUS.V_3V3 - 0.000000f) * (1 / 0.020000f));
         msg |= SetBits(56, 8, (out->VALVE_STATUS.V_12V - 0.000000f) * (1 / 0.100000f));
+        msg |= SetBits(32, 8, (out->VALVE_STATUS.CURRENT_SUM));
         
         platform_can_xmit_mb(0, MBN_TX_VALVE_STATUS + __mb_shift__, msg);
     }
@@ -113,6 +133,7 @@ void can_node_valves_bus0_tx(volatile t_can_node_valves_bus0_output *out)
 
 void can_node_valves_bus0_update_timers(uint32_t time_delta_us)
 {
+    msg_cntr_ctrl_to_valve += msg_cntr_ctrl_to_valve >= ALIVE_THRESHOLD * MSG_CYCLE_CTRL_TO_VALVE ? 0 : time_delta_us;
     msg_cntr_valve_status += time_delta_us;
 }
 
@@ -125,9 +146,10 @@ __attribute__((weak)) uint32_t platform_can_is_message_arrived(uint32_t bus_id, 
 
 
 //====== Weak Callback functions ======
-__attribute__((weak)) void platform_can_valve_status_cb(uint32_t id, uint64_t msg, uint32_t dlc) {}
+__attribute__((weak)) void can_node_valve_status_cb(uint32_t id, uint64_t msg, uint32_t dlc) {}
 
-__attribute__((weak)) void platform_can_valve_status_checksum_cb(uint32_t id, uint64_t msg, uint32_t dlc) {}
+__attribute__((weak)) void can_node_valve_status_checksum_cb(uint32_t id, uint64_t msg, uint32_t dlc) {}
 
+__attribute__((weak)) void can_node_ctrl_to_valve_cb(uint32_t id, uint64_t msg, uint32_t dlc) {}
 
 

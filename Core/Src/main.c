@@ -122,12 +122,12 @@ void can_node_valve_status_cb(uint32_t id, uint64_t msg, uint32_t dlc)
 void can_node_ctrl_to_valve_cb(uint32_t id, uint64_t msg, uint32_t dlc)
 {
     uint16_t servo_us[4];
-    servo_us[0] = get_servo_us(CLIP(can_in.CTRL_TO_VALVE.VALVE_1_REQ, 0, 100), param.servo_close_us[0], param.servo_open_us[0]);
-    servo_us[1] = get_servo_us(CLIP(can_in.CTRL_TO_VALVE.VALVE_2_REQ, 0, 100), param.servo_close_us[1], param.servo_open_us[1]);
-    servo_us[2] = get_servo_us(CLIP(can_in.CTRL_TO_VALVE.VALVE_3_REQ, 0, 100), param.servo_close_us[2], param.servo_open_us[2]);
-    servo_us[3] = get_servo_us(CLIP(can_in.CTRL_TO_VALVE.VALVE_4_REQ, 0, 100), param.servo_close_us[3], param.servo_open_us[3]);
+    servo_us[0] = get_servo_us(can_in.CTRL_TO_VALVE.VALVE_1_REQ, param.servo_close_us[0], param.servo_open_us[0]);
+    servo_us[1] = get_servo_us(can_in.CTRL_TO_VALVE.VALVE_2_REQ, param.servo_close_us[1], param.servo_open_us[1]);
+    servo_us[2] = get_servo_us(can_in.CTRL_TO_VALVE.VALVE_3_REQ, param.servo_close_us[2], param.servo_open_us[2]);
+    servo_us[3] = get_servo_us(can_in.CTRL_TO_VALVE.VALVE_4_REQ, param.servo_close_us[3], param.servo_open_us[3]);
 
-    if(v.servo_us[0] != servo_us[0] || v.servo_us[3] != servo_us[3] || v.servo_us[2] != servo_us[2] || v.servo_us[3] != servo_us[3])
+    if(v.servo_us[0] != servo_us[0] || v.servo_us[1] != servo_us[1] || v.servo_us[2] != servo_us[2] || v.servo_us[3] != servo_us[3])
     {
         v.servo_power = GPIO_PIN_SET;
         v.time_change_position = HAL_GetTick();
@@ -169,6 +169,8 @@ uint32_t get_servo_us(uint32_t position, uint32_t closed, uint32_t opened)
 {
     uint32_t range = 0;
     uint32_t shift = closed;
+
+    position = CLIPH(position, CAN_SIGNAL_VALVE_1_REQ_MAX);
     if(closed <= opened)
     {
         range = opened - closed;
@@ -178,7 +180,7 @@ uint32_t get_servo_us(uint32_t position, uint32_t closed, uint32_t opened)
         range = closed - opened;
         shift = opened;
     }
-    return shift + position * range / 100;
+    return shift + position * range / CAN_SIGNAL_VALVE_1_REQ_MAX;
 }
 /* USER CODE END 0 */
 
@@ -248,9 +250,12 @@ int main(void)
     xcp_can_poll();
     can_node_valves_bus0_rx(&can_in);
 
+    // Базовые измерения
     v.VCC = Calculate_VDD(v.ADC[ADC_VCC]);
     v.CPU_temp = Calculate_Temperature(v.ADC[ADC_TEMP], v.VCC);
 
+
+    // Управление питанием сервоприводов
     if(v.servo_power == GPIO_PIN_SET)
     {
         if((HAL_GetTick() - v.time_change_position) > param.servo_power_time_us)

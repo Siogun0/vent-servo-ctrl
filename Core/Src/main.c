@@ -81,6 +81,7 @@ const param_t param_def =
     .size = sizeof(param_t) - sizeof(common_param_t),
     .servo_close_us = {1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000},
     .servo_open_us = {2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000},
+    .servo_power_time_us = 5000,
 };
 
 uint32_t xcp_base_id = XCP_BASE_ID;
@@ -120,10 +121,27 @@ void can_node_valve_status_cb(uint32_t id, uint64_t msg, uint32_t dlc)
 
 void can_node_ctrl_to_valve_cb(uint32_t id, uint64_t msg, uint32_t dlc)
 {
-    v.servo_us[0] = get_servo_us(can_in.CTRL_TO_VALVE.VALVE_1_REQ, param.servo_close_us[0], param.servo_open_us[0]);
-    v.servo_us[1] = get_servo_us(can_in.CTRL_TO_VALVE.VALVE_2_REQ, param.servo_close_us[1], param.servo_open_us[1]);
-    v.servo_us[2] = get_servo_us(can_in.CTRL_TO_VALVE.VALVE_3_REQ, param.servo_close_us[2], param.servo_open_us[2]);
-    v.servo_us[3] = get_servo_us(can_in.CTRL_TO_VALVE.VALVE_4_REQ, param.servo_close_us[3], param.servo_open_us[3]);
+    uint16_t servo_us[4];
+    servo_us[0] = get_servo_us(CLIP(can_in.CTRL_TO_VALVE.VALVE_1_REQ, 0, 100), param.servo_close_us[0], param.servo_open_us[0]);
+    servo_us[1] = get_servo_us(CLIP(can_in.CTRL_TO_VALVE.VALVE_2_REQ, 0, 100), param.servo_close_us[1], param.servo_open_us[1]);
+    servo_us[2] = get_servo_us(CLIP(can_in.CTRL_TO_VALVE.VALVE_3_REQ, 0, 100), param.servo_close_us[2], param.servo_open_us[2]);
+    servo_us[3] = get_servo_us(CLIP(can_in.CTRL_TO_VALVE.VALVE_4_REQ, 0, 100), param.servo_close_us[3], param.servo_open_us[3]);
+
+    if(v.servo_us[0] != servo_us[0] || v.servo_us[3] != servo_us[3] || v.servo_us[2] != servo_us[2] || v.servo_us[3] != servo_us[3])
+    {
+        v.servo_power = GPIO_PIN_SET;
+        v.time_change_position = HAL_GetTick();
+        v.servo_us[0] = servo_us[0];
+        v.servo_us[1] = servo_us[1];
+        v.servo_us[2] = servo_us[2];
+        v.servo_us[3] = servo_us[3];
+    }
+
+    htim1.Instance->CCR1 = v.servo_us[0];
+    htim1.Instance->CCR2 = v.servo_us[1];
+    htim1.Instance->CCR3 = v.servo_us[2];
+    htim1.Instance->CCR4 = v.servo_us[3];
+
 }
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
@@ -215,6 +233,9 @@ int main(void)
 
   can_node_valves_bus0_init(xcp_used_mbxs(), 0, 0, &can_out, &can_in);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
   ADC_Start();
 
   __enable_irq();
@@ -230,10 +251,24 @@ int main(void)
     v.VCC = Calculate_VDD(v.ADC[ADC_VCC]);
     v.CPU_temp = Calculate_Temperature(v.ADC[ADC_TEMP], v.VCC);
 
+    if(v.servo_power == GPIO_PIN_SET)
+    {
+        if((HAL_GetTick() - v.time_change_position) > param.servo_power_time_us)
+        {
+            v.servo_power = GPIO_PIN_RESET;
+        }
+        HAL_GPIO_WritePin(SERVO_POWER_GPIO_Port, SERVO_POWER_Pin, v.servo_power);
+    }
+
     can_node_valves_bus0_tx(&can_out);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    if(v.update_boot == 1)
+    {
+        set_flash_bootloader();
+        v.update_boot = 2;
+    }
     HAL_IWDG_Refresh(&hiwdg);
   }
   /* USER CODE END 3 */
@@ -326,6 +361,8 @@ void load_param(void)
 
     //Recalculate CRC
     param.common.crc = HAL_CRC_Calculate(&hcrc, (uint32_t*)&param.common.size, param.common.size / 4 - 1);
+
+    param.size = param_def.size;
     param.crc = HAL_CRC_Calculate(&hcrc, (uint32_t*)&param.size, param.size / 4 - 1);
 }
 

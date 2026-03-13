@@ -47,15 +47,17 @@ extern "C" {
 
 typedef struct
 {
-    uint32_t update_boot;   //0x20003C00
-    uint32_t test1;         //0x20003C04
-    uint32_t test2;         //0x20003C08
-    uint32_t test3;         //0x20003C0C
-    uint16_t ADC[8];        //0x20003C10, 0x20003C12, 0x20003C14, 0x20003C16,..., 0x20003C1E
-    float CPU_temp;         //0x20003C20
-    float VCC;              //0x20003C24
-    uint16_t servo_us[SERVOS_NUMBER];   //0x20003C28, 0x20003C2A, 0x20003C2C, 0x20003C2E,..., 0x20003C26
-
+    uint32_t update_boot;               //0x20003C00
+    uint32_t test1;                     //0x20003C04
+    uint32_t test2;                     //0x20003C08
+    uint32_t test3;                     //0x20003C0C
+    uint16_t ADC[8];                    //0x20003C10, 0x20003C12, 0x20003C14, 0x20003C16,..., 0x20003C1E
+    float CPU_temp;                     //0x20003C20
+    float VCC;                          //0x20003C24
+    uint16_t servo_us[SERVOS_NUMBER];   //0x20003C28, 0x20003C2A, 0x20003C2C, 0x20003C2E,..., 0x20003C36
+    uint8_t valve_status[SERVOS_NUMBER];//0x20003C38, 0x20003C39, 0x20003C3A, 0x20003C3B,..., 0x20003C3F
+    uint32_t time_change_position;      //0x20003C40
+    uint32_t servo_power;               //0x20003C44
 
 } var_t;
 
@@ -66,6 +68,7 @@ typedef struct
     uint32_t size;
     uint16_t servo_close_us[SERVOS_NUMBER];
     uint16_t servo_open_us[SERVOS_NUMBER];
+    uint32_t servo_power_time_us;
 } param_t;
 /* USER CODE END ET */
 

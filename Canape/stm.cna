@@ -31,7 +31,7 @@ PrgDate=15.07.2019
 Description=
 CreationTime=11:44
 CreationDate=05/12/2017 ; Month/Day/Year
-ModificationTime=08:34
+ModificationTime=16:17
 ModificationDate=03/13/2026 ; Month/Day/Year
 Protected=0
 
@@ -39,7 +39,7 @@ Protected=0
 Count=0
 
 [CALIBRATION_LIST]
-Count=15
+Count=16
 
 [CALIBRATION_OBJECT_1]
 EditOffset=1
@@ -86,6 +86,17 @@ StimMode=0
 IsFallback=0
 
 [CALIBRATION_OBJECT_13]
+EditOffset=1
+EditFactor=2
+EditFormat=2
+ShowWorkingPoint=0
+FollowWorkingPoint=0
+Module=stm
+Name=param.servo_power_time
+StimMode=0
+IsFallback=0
+
+[CALIBRATION_OBJECT_14]
 EditOffset=0
 EditFactor=0
 EditFormat=2
@@ -96,7 +107,7 @@ Name=param.xcp_canid_rx
 StimMode=0
 IsFallback=0
 
-[CALIBRATION_OBJECT_14]
+[CALIBRATION_OBJECT_15]
 EditOffset=1
 EditFactor=2
 EditFormat=2
@@ -107,7 +118,7 @@ Name=param.xcp_canid_tx
 StimMode=0
 IsFallback=0
 
-[CALIBRATION_OBJECT_15]
+[CALIBRATION_OBJECT_16]
 EditOffset=1
 EditFactor=2
 EditFormat=2
@@ -242,7 +253,7 @@ Count=0
 Name=ctrl
 Comment=
 Maximized=0
-ActiveWindow=8
+ActiveWindow=5
 IsReportPage=0
 TimeAxisSynchronized=0
 PrintLayout=Default
@@ -591,7 +602,7 @@ Rate=100
 Disabled=0
 Row=0
 Column=0
-MeaReferenced=1
+MeaReferenced=0
 ArchivBy_1=Recorder
 IsFallback=0
 DisplayCount=1
@@ -1091,7 +1102,7 @@ PosLeft=0
 PosTop=0
 PosRight=268
 PosBottom=647
-FocusID=2004
+FocusID=2003
 ActiveTab=0
 FilterNodeID=All
 SearchHistory_0=vw_ra
@@ -1099,23 +1110,25 @@ SearchHistory_1=vw
 SearchHistory_2=trq
 SearchHistory_3=cra
 TreeExpand_0=@All
-TreeExpand_1=All\Devices\stm\Unknown variables
-TreeExpand_2=All\Devices\stm\stm.a2l\measure
-TreeExpand_3=All\Configuration (stm)\Contained components\Pages
-TreeExpand_4=All\Configuration (stm)\Contained components
-TreeExpand_5=All\Devices\Environment
-TreeExpand_6=All\Devices\Environment\Environment
-TreeExpand_7=All\Devices\stm\stm.a2l
+TreeExpand_1=All\Devices\stm\stm.a2l\Software structure
+TreeExpand_2=All\Devices\stm
+TreeExpand_3=All\Devices
+TreeExpand_4=All\Measurement list\stm
+TreeExpand_5=All\Devices\stm\stm.a2l\param
+TreeExpand_6=All\Measurement files\FILE1\Signals
+TreeExpand_7=All\Measurement files
 TreeExpand_8=All\Measurement files\FILE2\Signals
-TreeExpand_9=All\Measurement files
-TreeExpand_10=All\Measurement files\FILE1\Signals
-TreeExpand_11=All\Devices\stm\stm.a2l\param
-TreeExpand_12=All\Measurement list\stm
-TreeExpand_13=All\Devices
-TreeExpand_14=All\Devices\stm
-TreeExpand_15=All\Devices\stm\stm.a2l\Software structure
-TreeExpand_16=$All\Devices
-TreeExpand_17=#All\Devices\stm\Unknown variables\v.ADC_0
+TreeExpand_9=All\Devices\stm\stm.a2l
+TreeExpand_10=All\Devices\Environment\Environment
+TreeExpand_11=All\Devices\Environment
+TreeExpand_12=All\Configuration (stm)\Contained components
+TreeExpand_13=All\Configuration (stm)\Contained components\Pages
+TreeExpand_14=All\Devices\stm\stm.a2l\measure
+TreeExpand_15=All\Devices\stm\Unknown variables
+TreeExpand_16=All\Devices\stm\Unknown variables\Software structure
+TreeExpand_17=All\Devices\stm\Unknown variables\Software structure\v
+TreeExpand_18=$All\Devices
+TreeExpand_19=#All\Devices\stm\stm.a2l\param\param.servo_power_time
 TextSearchCaseSensitive=0
 TextSearchUseMode=1
 TextSearchSearchFullText=1
@@ -1221,8 +1234,8 @@ DisplayMask=1 ; pages 1
 
 [WINDOW_4]
 XLen=2000
-XMin=21197
-XMax=23197
+XMin=2832
+XMax=4832
 Grid=1
 Mark=1
 YValue=1
@@ -1285,7 +1298,7 @@ DISPLAY_WIDTH_01=125
 ColumnWidth=200 125 -100 -100
 Group=0
 Sorted=0
-ObjectCount=10
+ObjectCount=11
 Title=Parameter
 Type=8
 Comment=Calibration window
@@ -1343,6 +1356,47 @@ Name=param.servo_open_us_4
 Module=stm
 Window=5
 Index=9
+Color=0
+ColorFunction=0
+ColorFunctionScope=1
+LineTyp=2
+YMinHome=0
+YMaxHome=100
+YMin=0
+YMax=100
+XOffsetNS=0
+XOffset=0
+ValueFormat=3
+BitMask=1
+ShowYAxis=1
+Width=10
+LineStyle=1
+MarkerType=1
+LineWidth=1
+Precision=-2
+Digits=6
+Enabled=1
+StoredFocused=0
+SublMask=0
+MeaSublMask=0
+LockScaling=0
+MapMode=2
+OverlayGridColor=16777216
+ShadingMode=3
+EditOffset=1
+EditFactor=2
+AxisCaption=
+Row=0
+Col=0
+YAxis_ID=0
+AxisTemplate=
+
+[WINDOW_5_OBJECT_11]
+Type=2
+Name=param.servo_power_time
+Module=stm
+Window=5
+Index=10
 Color=0
 ColorFunction=0
 ColorFunctionScope=1

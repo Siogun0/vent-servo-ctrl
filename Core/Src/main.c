@@ -179,6 +179,7 @@ uint32_t get_servo_us(uint32_t position, uint32_t closed, uint32_t opened)
     {
         range = closed - opened;
         shift = opened;
+        position = CAN_SIGNAL_VALVE_1_REQ_MAX - position;
     }
     return shift + position * range / CAN_SIGNAL_VALVE_1_REQ_MAX;
 }

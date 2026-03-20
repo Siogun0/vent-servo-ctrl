@@ -246,6 +246,9 @@ int main(void)
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
+
+  __enable_irq();
+
   ADC_Start();
 
   if (INA219_Init(&ina219, &hi2c1, INA219_ADDRESS, param.ina219_config) != HAL_OK)
@@ -258,9 +261,6 @@ int main(void)
 //  {
 //     while(1);
 //  }
-
-
-  __enable_irq();
   /* USER CODE END 2 */
 
   /* Infinite loop */

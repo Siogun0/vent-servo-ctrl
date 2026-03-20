@@ -31,8 +31,8 @@ PrgDate=15.07.2019
 Description=
 CreationTime=11:44
 CreationDate=05/12/2017 ; Month/Day/Year
-ModificationTime=16:17
-ModificationDate=03/13/2026 ; Month/Day/Year
+ModificationTime=20:34
+ModificationDate=03/17/2026 ; Month/Day/Year
 Protected=0
 
 [AVI_LIST]
@@ -53,7 +53,7 @@ StimMode=0
 IsFallback=0
 
 [CALIBRATION_OBJECT_10]
-EditOffset=1
+EditOffset=100
 EditFactor=2
 EditFormat=2
 ShowWorkingPoint=0
@@ -174,7 +174,7 @@ StimMode=0
 IsFallback=0
 
 [CALIBRATION_OBJECT_6]
-EditOffset=1
+EditOffset=100
 EditFactor=2
 EditFormat=2
 ShowWorkingPoint=0
@@ -602,7 +602,7 @@ Rate=100
 Disabled=0
 Row=0
 Column=0
-MeaReferenced=0
+MeaReferenced=1
 ArchivBy_1=Recorder
 IsFallback=0
 DisplayCount=1
@@ -996,7 +996,7 @@ WindowTextExtendedNew=1
 WindowSymbols=1
 GlobalCursor=0
 GlobalCursorTime=0
-MainWindowPos=2, 2719, -734, 1942, 1102 ;cmd, x, y, w, h
+MainWindowPos=2, 1, 1, 1918, 1018 ;cmd, x, y, w, h
 
 [PAR_COMMENT]
 1="Name",""
@@ -1110,23 +1110,23 @@ SearchHistory_1=vw
 SearchHistory_2=trq
 SearchHistory_3=cra
 TreeExpand_0=@All
-TreeExpand_1=All\Devices\stm\stm.a2l\Software structure
-TreeExpand_2=All\Devices\stm
-TreeExpand_3=All\Devices
-TreeExpand_4=All\Measurement list\stm
-TreeExpand_5=All\Devices\stm\stm.a2l\param
-TreeExpand_6=All\Measurement files\FILE1\Signals
-TreeExpand_7=All\Measurement files
-TreeExpand_8=All\Measurement files\FILE2\Signals
+TreeExpand_1=All\Devices\stm\Unknown variables\Software structure\v
+TreeExpand_2=All\Devices\stm\Unknown variables\Software structure
+TreeExpand_3=All\Devices\stm\Unknown variables
+TreeExpand_4=All\Devices\stm\stm.a2l\measure
+TreeExpand_5=All\Configuration (stm)\Contained components\Pages
+TreeExpand_6=All\Configuration (stm)\Contained components
+TreeExpand_7=All\Devices\Environment
+TreeExpand_8=All\Devices\Environment\Environment
 TreeExpand_9=All\Devices\stm\stm.a2l
-TreeExpand_10=All\Devices\Environment\Environment
-TreeExpand_11=All\Devices\Environment
-TreeExpand_12=All\Configuration (stm)\Contained components
-TreeExpand_13=All\Configuration (stm)\Contained components\Pages
-TreeExpand_14=All\Devices\stm\stm.a2l\measure
-TreeExpand_15=All\Devices\stm\Unknown variables
-TreeExpand_16=All\Devices\stm\Unknown variables\Software structure
-TreeExpand_17=All\Devices\stm\Unknown variables\Software structure\v
+TreeExpand_10=All\Measurement files\FILE2\Signals
+TreeExpand_11=All\Measurement files
+TreeExpand_12=All\Measurement files\FILE1\Signals
+TreeExpand_13=All\Devices\stm\stm.a2l\param
+TreeExpand_14=All\Measurement list\stm
+TreeExpand_15=All\Devices
+TreeExpand_16=All\Devices\stm
+TreeExpand_17=All\Devices\stm\stm.a2l\Software structure
 TreeExpand_18=$All\Devices
 TreeExpand_19=#All\Devices\stm\stm.a2l\param\param.servo_power_time
 TextSearchCaseSensitive=0

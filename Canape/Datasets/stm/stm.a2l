@@ -1450,6 +1450,51 @@ OVERLOAD_INDICATION_EVENT: This means an event is set, when an overload occurs*/
 
 
 
+    /begin COMPU_METHOD param.servo_close_us_1.CONVERSION "@@@@RuleName created by CANape"
+      RAT_FUNC "%3.1" "us"
+      COEFFS 0 1 0 0 0 1
+    /end COMPU_METHOD
+
+    /begin COMPU_METHOD param.servo_close_us_2.CONVERSION "@@@@RuleName created by CANape"
+      RAT_FUNC "%3.1" "us"
+      COEFFS 0 1 0 0 0 1
+    /end COMPU_METHOD
+
+    /begin COMPU_METHOD param.servo_close_us_3.CONVERSION "@@@@RuleName created by CANape"
+      RAT_FUNC "%3.1" "us"
+      COEFFS 0 1 0 0 0 1
+    /end COMPU_METHOD
+
+    /begin COMPU_METHOD param.servo_close_us_4.CONVERSION "@@@@RuleName created by CANape"
+      RAT_FUNC "%3.1" "us"
+      COEFFS 0 1 0 0 0 1
+    /end COMPU_METHOD
+
+    /begin COMPU_METHOD param.servo_open_us_1.CONVERSION "@@@@RuleName created by CANape"
+      RAT_FUNC "%3.1" "us"
+      COEFFS 0 1 0 0 0 1
+    /end COMPU_METHOD
+
+    /begin COMPU_METHOD param.servo_open_us_2.CONVERSION "@@@@RuleName created by CANape"
+      RAT_FUNC "%3.1" "us"
+      COEFFS 0 1 0 0 0 1
+    /end COMPU_METHOD
+
+    /begin COMPU_METHOD param.servo_open_us_3.CONVERSION "@@@@RuleName created by CANape"
+      RAT_FUNC "%3.1" "us"
+      COEFFS 0 1 0 0 0 1
+    /end COMPU_METHOD
+
+    /begin COMPU_METHOD param.servo_open_us_4.CONVERSION "@@@@RuleName created by CANape"
+      RAT_FUNC "%3.1" "us"
+      COEFFS 0 1 0 0 0 1
+    /end COMPU_METHOD
+
+    /begin COMPU_METHOD param.servo_power_time.CONVERSION "@@@@RuleName created by CANape"
+      RAT_FUNC "%3.1" "ms"
+      COEFFS 0 1 0 0 0 1
+    /end COMPU_METHOD
+
     /begin COMPU_VTAB v.servo_power.CONVERSION "@@@@RuleName created by CANape" TAB_VERB 2
       0 "Disable"
       1 "Enable"
@@ -1588,85 +1633,75 @@ OVERLOAD_INDICATION_EVENT: This means an event is set, when an overload occurs*/
       MAX_REFRESH 6 1
     /end CHARACTERISTIC
 
-    /begin CHARACTERISTIC param.size ""
-      VALUE 0x20004C44 __ULONG_S 0 NO_COMPU_METHOD 0 4294967295
-      ECU_ADDRESS_EXTENSION 0x0
-      EXTENDED_LIMITS 0 4294967295
-      FORMAT "%.15"
-    /end CHARACTERISTIC
-
     /begin CHARACTERISTIC param.servo_close_us_1 ""
-      VALUE 0x20004C48 __UWORD_S 0 param.servo_open_us_4.CONVERSION.DIFF_UNIT 0 65535
+      VALUE 0x20004C48 __UWORD_S 0 param.servo_close_us_1.CONVERSION 0 65535
       ECU_ADDRESS_EXTENSION 0x0
       EXTENDED_LIMITS 0 65535
       FORMAT "%.15"
     /end CHARACTERISTIC
 
     /begin CHARACTERISTIC param.servo_close_us_2 ""
-      VALUE 0x20004C4A __UWORD_S 0 param.servo_open_us_4.CONVERSION.DIFF_UNIT 0 65535
+      VALUE 0x20004C4A __UWORD_S 0 param.servo_close_us_2.CONVERSION 0 65535
       ECU_ADDRESS_EXTENSION 0x0
       EXTENDED_LIMITS 0 65535
       FORMAT "%.15"
     /end CHARACTERISTIC
 
     /begin CHARACTERISTIC param.servo_close_us_3 ""
-      VALUE 0x20004C4C __UWORD_S 0 param.servo_open_us_4.CONVERSION.DIFF_UNIT 0 65535
+      VALUE 0x20004C4C __UWORD_S 0 param.servo_close_us_3.CONVERSION 0 65535
       ECU_ADDRESS_EXTENSION 0x0
       EXTENDED_LIMITS 0 65535
       FORMAT "%.15"
     /end CHARACTERISTIC
 
     /begin CHARACTERISTIC param.servo_close_us_4 ""
-      VALUE 0x20004C4E __UWORD_S 0 param.servo_open_us_4.CONVERSION.DIFF_UNIT 0 65535
+      VALUE 0x20004C4E __UWORD_S 0 param.servo_close_us_4.CONVERSION 0 65535
       ECU_ADDRESS_EXTENSION 0x0
       EXTENDED_LIMITS 0 65535
       FORMAT "%.15"
     /end CHARACTERISTIC
 
     /begin CHARACTERISTIC param.servo_open_us_1 ""
-      VALUE 0x20004C58 __UWORD_S 0 param.servo_open_us_4.CONVERSION.DIFF_UNIT 0 65535
+      VALUE 0x20004C58 __UWORD_S 0 param.servo_open_us_1.CONVERSION 0 65535
       ECU_ADDRESS_EXTENSION 0x0
       EXTENDED_LIMITS 0 65535
       FORMAT "%.15"
     /end CHARACTERISTIC
 
     /begin CHARACTERISTIC param.servo_open_us_2 ""
-      VALUE 0x20004C5A __UWORD_S 0 param.servo_open_us_4.CONVERSION.DIFF_UNIT 0 65535
+      VALUE 0x20004C5A __UWORD_S 0 param.servo_open_us_2.CONVERSION 0 65535
       ECU_ADDRESS_EXTENSION 0x0
       EXTENDED_LIMITS 0 65535
       FORMAT "%.15"
     /end CHARACTERISTIC
 
     /begin CHARACTERISTIC param.servo_open_us_3 ""
-      VALUE 0x20004C5C __UWORD_S 0 param.servo_open_us_4.CONVERSION.DIFF_UNIT 0 65535
+      VALUE 0x20004C5C __UWORD_S 0 param.servo_open_us_3.CONVERSION 0 65535
       ECU_ADDRESS_EXTENSION 0x0
       EXTENDED_LIMITS 0 65535
       FORMAT "%.15"
     /end CHARACTERISTIC
 
     /begin CHARACTERISTIC param.servo_open_us_4 ""
-      VALUE 0x20004C5E __UWORD_S 0 param.servo_open_us_4.CONVERSION.DIFF_UNIT 0 65535
+      VALUE 0x20004C5E __UWORD_S 0 param.servo_open_us_4.CONVERSION 0 65535
       ECU_ADDRESS_EXTENSION 0x0
       EXTENDED_LIMITS 0 65535
       FORMAT "%.15"
     /end CHARACTERISTIC
-	
-	/begin COMPU_METHOD param.servo_open_us_4.CONVERSION.DIFF_UNIT "@@@@RuleName created by CANape"
-      RAT_FUNC "%3.1" "us"
-      COEFFS 0 1 0 0 0 1
-    /end COMPU_METHOD
 
     /begin CHARACTERISTIC param.servo_power_time ""
-      VALUE 0x20004C68 __ULONG_S 0 param.servo_power_time.CONVERSION.DIFF_UNIT 0 4294967295
+      VALUE 0x20004C68 __ULONG_S 0 param.servo_power_time.CONVERSION 0 4294967295
       ECU_ADDRESS_EXTENSION 0x0
       EXTENDED_LIMITS 0 4294967295
       FORMAT "%.15"
     /end CHARACTERISTIC
 
-    /begin COMPU_METHOD param.servo_power_time.CONVERSION.DIFF_UNIT "@@@@RuleName created by CANape"
-      RAT_FUNC "%3.1" "ms"
-      COEFFS 0 1 0 0 0 1
-    /end COMPU_METHOD
+    /begin CHARACTERISTIC param.size ""
+      VALUE 0x20004C44 __ULONG_S 0 NO_COMPU_METHOD 0 4294967295
+      ECU_ADDRESS_EXTENSION 0x0
+      EXTENDED_LIMITS 0 4294967295
+      FORMAT "%.15"
+    /end CHARACTERISTIC
 
     /begin CHARACTERISTIC param.xcp_canid_rx ""
       VALUE 0x20004C08 __ULONG_S 0 NO_COMPU_METHOD 0 4294967295
@@ -1724,6 +1759,20 @@ OVERLOAD_INDICATION_EVENT: This means an event is set, when an overload occurs*/
       FORMAT "%.15"
     /end MEASUREMENT
 
+    /begin MEASUREMENT v.current_servo ""
+      FLOAT32_IEEE NO_COMPU_METHOD 0 0 -3.40282346639e+038 3.40282346639e+038
+      ECU_ADDRESS 0x20003C4C
+      ECU_ADDRESS_EXTENSION 0x0
+      FORMAT "%.15"
+    /end MEASUREMENT
+
+    /begin MEASUREMENT v.power_servo ""
+      FLOAT32_IEEE NO_COMPU_METHOD 0 0 -3.40282346639e+038 3.40282346639e+038
+      ECU_ADDRESS 0x20003C50
+      ECU_ADDRESS_EXTENSION 0x0
+      FORMAT "%.15"
+    /end MEASUREMENT
+
     /begin MEASUREMENT v.servo_power ""
       ULONG v.servo_power.CONVERSION 0 0 0 4294967295
       ECU_ADDRESS 0x20003C44
@@ -1766,11 +1815,18 @@ OVERLOAD_INDICATION_EVENT: This means an event is set, when an overload occurs*/
       FORMAT "%.15"
     /end MEASUREMENT
 
+    /begin MEASUREMENT v.voltage_servo ""
+      FLOAT32_IEEE NO_COMPU_METHOD 0 0 -3.40282346639e+038 3.40282346639e+038
+      ECU_ADDRESS 0x20003C48
+      ECU_ADDRESS_EXTENSION 0x0
+      FORMAT "%.15"
+    /end MEASUREMENT
+
     /begin GROUP measure ""
       ROOT
       /begin REF_MEASUREMENT
-        v.ADC[0] v.ADC[1] v.ADC[2] v.ADC[3] v.CPU_TEMP v.VCC v.servo_power v.valve_status_1 
-        v.valve_status_2 v.valve_status_3 v.valve_status_4 
+        v.ADC[0] v.ADC[1] v.ADC[2] v.ADC[3] v.CPU_TEMP v.VCC v.current_servo v.power_servo 
+        v.servo_power v.valve_status_1 v.valve_status_2 v.valve_status_3 v.valve_status_4 v.voltage_servo 
       /end REF_MEASUREMENT
     /end GROUP
 

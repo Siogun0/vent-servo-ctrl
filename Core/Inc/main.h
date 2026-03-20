@@ -39,6 +39,7 @@ extern "C" {
 #include "common_param.h"
 
 #include "can_node_valves_bus0.h"
+#include "ina219.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -57,7 +58,10 @@ typedef struct
     uint16_t servo_us[SERVOS_NUMBER];   //0x20003C28, 0x20003C2A, 0x20003C2C, 0x20003C2E,..., 0x20003C36
     uint8_t valve_status[SERVOS_NUMBER];//0x20003C38, 0x20003C39, 0x20003C3A, 0x20003C3B,..., 0x20003C3F
     uint32_t time_change_position;      //0x20003C40
-    uint32_t servo_power;               //0x20003C44
+    uint32_t is_servo_power_on;         //0x20003C44
+    float voltage_servo;                //0x20003C48
+    float current_servo;                //0x20003C4C
+    float power_servo;                  //0x20003C50
 
 } var_t;
 
@@ -69,6 +73,11 @@ typedef struct
     uint16_t servo_close_us[SERVOS_NUMBER];
     uint16_t servo_open_us[SERVOS_NUMBER];
     uint32_t servo_power_time_us;
+    uint32_t valve_active_time_us;
+    uint16_t ina219_config;
+    uint16_t reserve_1;
+    float    r_shunt;
+
 } param_t;
 /* USER CODE END ET */
 
@@ -100,6 +109,14 @@ void Error_Handler(void);
 #define VALVE_3_GPIO_Port GPIOA
 #define VALVE_4_Pin GPIO_PIN_3
 #define VALVE_4_GPIO_Port GPIOA
+#define VALVE_5_CLOSE_Pin GPIO_PIN_1
+#define VALVE_5_CLOSE_GPIO_Port GPIOB
+#define VALVE_5_OPEN_Pin GPIO_PIN_2
+#define VALVE_5_OPEN_GPIO_Port GPIOB
+#define VALVE_6_CLOSE_Pin GPIO_PIN_10
+#define VALVE_6_CLOSE_GPIO_Port GPIOB
+#define VALVE_6_OPEN_Pin GPIO_PIN_11
+#define VALVE_6_OPEN_GPIO_Port GPIOB
 #define SERVO_POWER_Pin GPIO_PIN_12
 #define SERVO_POWER_GPIO_Port GPIOB
 #define SERVO_1_Pin GPIO_PIN_8

@@ -82,6 +82,10 @@ const param_t param_def =
     .servo_close_us = {1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000},
     .servo_open_us = {2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000},
     .servo_power_time_us = 5000,
+    .valve_active_time_us = 30000,
+    .ina219_config = (INA219_CONFIG_BVOLTAGERANGE_32V | INA219_CONFIG_GAIN_1_320MV | INA219_CONFIG_BADCRES_12BIT_64S | INA219_CONFIG_SADCRES_12BIT_64S | INA219_CONFIG_MODE_CONTINUOUS),
+    .reserve_1 = 0,
+    .r_shunt = 0.1f,
 };
 
 uint32_t xcp_base_id = XCP_BASE_ID;
@@ -94,6 +98,8 @@ extern t_xcp_download_cb update_values;
 
 volatile t_can_node_valves_bus0_input can_in;
 volatile t_can_node_valves_bus0_output can_out;
+
+INA219_HandleTypeDef ina219;
 
 var_t __attribute__((section(".var_ram_sec"))) v;
 /* USER CODE END PV */
@@ -129,7 +135,7 @@ void can_node_ctrl_to_valve_cb(uint32_t id, uint64_t msg, uint32_t dlc)
 
     if(v.servo_us[0] != servo_us[0] || v.servo_us[1] != servo_us[1] || v.servo_us[2] != servo_us[2] || v.servo_us[3] != servo_us[3])
     {
-        v.servo_power = GPIO_PIN_SET;
+        v.is_servo_power_on = GPIO_PIN_SET;
         v.time_change_position = HAL_GetTick();
         v.servo_us[0] = servo_us[0];
         v.servo_us[1] = servo_us[1];
@@ -175,7 +181,7 @@ uint32_t get_servo_us(uint32_t position, uint32_t closed, uint32_t opened)
     {
         range = opened - closed;
     }
-    else
+    else // Inverse
     {
         range = closed - opened;
         shift = opened;
@@ -220,9 +226,10 @@ int main(void)
   MX_ADC1_Init();
   MX_CRC_Init();
   MX_IWDG_Init();
-  MX_I2C2_Init();
   MX_SPI2_Init();
   MX_TIM1_Init();
+  MX_I2C1_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
   platform_can_init();
@@ -241,6 +248,18 @@ int main(void)
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
   ADC_Start();
 
+  if (INA219_Init(&ina219, &hi2c1, INA219_ADDRESS, param.ina219_config) != HAL_OK)
+  {
+     while(1);
+  }
+
+      // Калибровка под шунт 0.1 Ом и максимальный ток 2А
+//  if (INA219_Calibrate(&ina219, param.r_shunt, 3.2768f) != HAL_OK)
+//  {
+//     while(1);
+//  }
+
+
   __enable_irq();
   /* USER CODE END 2 */
 
@@ -257,14 +276,16 @@ int main(void)
 
 
     // Управление питанием сервоприводов
-    if(v.servo_power == GPIO_PIN_SET)
+    if(v.is_servo_power_on == GPIO_PIN_SET)
     {
         if((HAL_GetTick() - v.time_change_position) > param.servo_power_time_us)
         {
-            v.servo_power = GPIO_PIN_RESET;
+            v.is_servo_power_on = GPIO_PIN_RESET;
         }
-        HAL_GPIO_WritePin(SERVO_POWER_GPIO_Port, SERVO_POWER_Pin, v.servo_power);
+        HAL_GPIO_WritePin(SERVO_POWER_GPIO_Port, SERVO_POWER_Pin, v.is_servo_power_on);
     }
+
+    INA219_ReadAndCulcAll(&ina219, &v.voltage_servo, &v.current_servo, &v.power_servo, param.r_shunt);
 
     can_node_valves_bus0_tx(&can_out);
     /* USER CODE END WHILE */

@@ -118,11 +118,25 @@ uint32_t get_servo_us(uint32_t position, uint32_t closed, uint32_t opened);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+uint32_t decode_analog_key(uint32_t value)
+{
+    if(value < ANALOG_KEY_OC) return CAN_SIGNAL_VALVE_1_OPENCIRCUIT;
+    else if(value < ANALOG_KEY_CLOSE) return CAN_SIGNAL_VALVE_1_CLOSED;
+    else if(value < ANALOG_KEY_OPEN) return CAN_SIGNAL_VALVE_1_OPENED;
+    else if(value < ANALOG_KEY_MIDDLE) return CAN_SIGNAL_VALVE_1_PARTIALLY;
+    else return CAN_SIGNAL_VALVE_1_SHORTCIRCUIT;
+}
 
 void can_node_valve_status_cb(uint32_t id, uint64_t msg, uint32_t dlc)
 {
     can_out.VALVE_STATUS.CPU_TEMP = roundf(v.CPU_temp);
     can_out.VALVE_STATUS.V_3V3 = v.VCC;
+    can_out.VALVE_STATUS.CURRENT_SUM = v.current_servo;
+
+    can_out.VALVE_STATUS.VALVE_1 = decode_analog_key(v.ADC[ADC_CH_0]);
+    can_out.VALVE_STATUS.VALVE_2 = decode_analog_key(v.ADC[ADC_CH_1]);
+    can_out.VALVE_STATUS.VALVE_3 = decode_analog_key(v.ADC[ADC_CH_2]);
+    can_out.VALVE_STATUS.VALVE_4 = decode_analog_key(v.ADC[ADC_CH_3]);
 }
 
 void can_node_ctrl_to_valve_cb(uint32_t id, uint64_t msg, uint32_t dlc)
@@ -202,7 +216,6 @@ int main(void)
     memset(&v, 0 , sizeof(v));
     memset(&_start_calib_ram, 0xFF , SECTOR_SIZE);
   /* USER CODE END 1 */
-
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -253,7 +266,7 @@ int main(void)
 
   if (INA219_Init(&ina219, &hi2c1, INA219_ADDRESS, param.ina219_config) != HAL_OK)
   {
-     while(1);
+//     while(1);//TODO if INA not exist
   }
 
       // Калибровка под шунт 0.1 Ом и максимальный ток 2А
@@ -296,6 +309,21 @@ int main(void)
         set_flash_bootloader();
         v.update_boot = 2;
     }
+
+    uint32_t tick = HAL_GetTick() % 500;
+    if(tick < 100)
+    {
+      HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+    }
+    else if(xcp_can_is_active && tick >= 200 && tick < 300)
+    {
+      HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+    }
+    else
+    {
+      HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+    }
+
     HAL_IWDG_Refresh(&hiwdg);
   }
   /* USER CODE END 3 */

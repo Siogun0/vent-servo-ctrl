@@ -45,6 +45,11 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 #define SERVOS_NUMBER   8
+#define VALVE_DRIVES_NUMBER 4
+
+#define VALVE_DRIVES_STOP   0
+#define VALVE_DRIVES_CLOSE  1
+#define VALVE_DRIVES_OPEN   2
 
 typedef struct
 {
@@ -62,6 +67,7 @@ typedef struct
     float voltage_servo;                //0x20003C48
     float current_servo;                //0x20003C4C
     float power_servo;                  //0x20003C50
+    uint8_t valve_drive_command[VALVE_DRIVES_NUMBER]; //0x20003C54
 
 } var_t;
 
@@ -84,6 +90,13 @@ typedef struct
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
 extern var_t v;
+
+#define ANALOG_KEY_COEF     (4096 / 3.3)
+#define ANALOG_KEY_OC       (uint32_t)(0.5 * ANALOG_KEY_COEF)
+#define ANALOG_KEY_CLOSE    (uint32_t)(1.2 * ANALOG_KEY_COEF)
+#define ANALOG_KEY_OPEN     (uint32_t)(2.0 * ANALOG_KEY_COEF)
+#define ANALOG_KEY_MIDDLE   (uint32_t)(2.8 * ANALOG_KEY_COEF)
+
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/

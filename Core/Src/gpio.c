@@ -55,7 +55,7 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, VALVE_5_CLOSE_Pin|VALVE_5_OPEN_Pin|VALVE_6_CLOSE_Pin|VALVE_6_OPEN_Pin
-                          |SERVO_POWER_Pin, GPIO_PIN_RESET);
+                          |SERVO_POWER_Pin|LED_CAN_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : LED_Pin */
   GPIO_InitStruct.Pin = LED_Pin;
@@ -65,9 +65,9 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(LED_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : VALVE_5_CLOSE_Pin VALVE_5_OPEN_Pin VALVE_6_CLOSE_Pin VALVE_6_OPEN_Pin
-                           SERVO_POWER_Pin */
+                           SERVO_POWER_Pin LED_CAN_Pin */
   GPIO_InitStruct.Pin = VALVE_5_CLOSE_Pin|VALVE_5_OPEN_Pin|VALVE_6_CLOSE_Pin|VALVE_6_OPEN_Pin
-                          |SERVO_POWER_Pin;
+                          |SERVO_POWER_Pin|LED_CAN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

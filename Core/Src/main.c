@@ -101,6 +101,9 @@ volatile t_can_node_valves_bus0_output can_out;
 
 INA219_HandleTypeDef ina219;
 
+uint32_t led_can_ts = 0;
+GPIO_PinState led_can_z1 = 0;
+
 var_t __attribute__((section(".var_ram_sec"))) v;
 /* USER CODE END PV */
 
@@ -132,6 +135,7 @@ void can_node_valve_status_cb(uint32_t id, uint64_t msg, uint32_t dlc)
     can_out.VALVE_STATUS.CPU_TEMP = roundf(v.CPU_temp);
     can_out.VALVE_STATUS.V_3V3 = v.VCC;
     can_out.VALVE_STATUS.CURRENT_SUM = v.current_servo;
+    can_out.VALVE_STATUS.V_12V = v.voltage_servo;
 
     can_out.VALVE_STATUS.VALVE_1 = decode_analog_key(v.ADC[ADC_CH_0]);
     can_out.VALVE_STATUS.VALVE_2 = decode_analog_key(v.ADC[ADC_CH_1]);
@@ -172,7 +176,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
     if(HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &rx_header, data) != HAL_OK) return;
 
     platform_can_msg_recieve(0, &rx_header, data);
-
+    HAL_GPIO_WritePin(LED_CAN_GPIO_Port, LED_CAN_Pin, GPIO_PIN_SET);
 }
 
 void HAL_CAN_RxFifo0FullCallback(CAN_HandleTypeDef *hcan)
@@ -216,6 +220,7 @@ int main(void)
     memset(&v, 0 , sizeof(v));
     memset(&_start_calib_ram, 0xFF , SECTOR_SIZE);
   /* USER CODE END 1 */
+
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -310,6 +315,7 @@ int main(void)
         v.update_boot = 2;
     }
 
+    // Board LED
     uint32_t tick = HAL_GetTick() % 500;
     if(tick < 100)
     {
@@ -322,6 +328,22 @@ int main(void)
     else
     {
       HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+    }
+
+    // CAN LED
+    if(HAL_GPIO_ReadPin(LED_CAN_GPIO_Port, LED_CAN_Pin) == GPIO_PIN_SET)
+    {
+        if(led_can_z1 == GPIO_PIN_RESET)
+        {
+            led_can_z1 = GPIO_PIN_SET;
+            led_can_ts = HAL_GetTick();
+        }
+        else if(HAL_GetTick() - led_can_ts > 3)
+        {
+            HAL_GPIO_WritePin(LED_CAN_GPIO_Port, LED_CAN_Pin, GPIO_PIN_RESET);
+            led_can_z1 = GPIO_PIN_RESET;
+            led_can_ts = HAL_GetTick();
+        }
     }
 
     HAL_IWDG_Refresh(&hiwdg);

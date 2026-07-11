@@ -140,6 +140,8 @@ void Error_Handler(void);
 #define SERVO_3_GPIO_Port GPIOA
 #define SERVO_4_Pin GPIO_PIN_11
 #define SERVO_4_GPIO_Port GPIOA
+#define LED_CAN_Pin GPIO_PIN_5
+#define LED_CAN_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

@@ -60,6 +60,8 @@
 #define CAN_SIGNAL_CPU_TEMP_MIN  -40
 #define CAN_SIGNAL_V_3V3_MAX  5
 #define CAN_SIGNAL_V_12V_MAX  25
+#define CAN_SIGNAL_I_12V_MAX  32000
+#define CAN_SIGNAL_I_12V_MIN  -32000
 
 typedef struct
 {
@@ -81,6 +83,7 @@ typedef struct
 typedef struct
 {
     uint32_t valve_status;
+    uint32_t power_status;
 } t_can_node_valves_bus0_output_tx_now;
 
 typedef struct
@@ -93,18 +96,23 @@ typedef struct
         uint8_t VALVE_4;
         int16_t CPU_TEMP;
         float V_3V3;
-        float V_12V;
-        uint8_t CURRENT_SUM;
     } VALVE_STATUS;
+    struct
+    {
+        float V_12V;
+        float I_12V;
+        float P_12V;
+    } POWER_STATUS;
     t_can_node_valves_bus0_output_tx_now tx_now;
 } t_can_node_valves_bus0_output;
 
 #define MBN_TX_VALVE_STATUS 0
-#define MBN_RX_CTRL_TO_VALVE 1
+#define MBN_TX_POWER_STATUS 1
+#define MBN_RX_CTRL_TO_VALVE 2
 
 #define MBN_FIRST_BUS_0 0
-#define MBN_TOTAL_BUS_0 2
-#define MBN_NEXT_FREE_BUS_0 2
+#define MBN_TOTAL_BUS_0 3
+#define MBN_NEXT_FREE_BUS_0 3
 
 #ifndef CAN_EID_FLG
 #define CAN_EID_FLG 0x80000000UL
@@ -116,6 +124,7 @@ typedef void (*t_mailbox_callback)(uint32_t id, uint64_t msg, uint32_t dlc);
 #endif
 
 #define MSG_CYCLE_VALVE_STATUS 100000
+#define MSG_CYCLE_POWER_STATUS 100000
 #define MSG_CYCLE_CTRL_TO_VALVE 100000
 
 //====== API functions ======
@@ -133,8 +142,10 @@ uint32_t platform_can_is_message_arrived(uint32_t bus_id, uint32_t mbn);
 
 //====== Callback functions ======
 void can_node_valve_status_cb(uint32_t id, uint64_t msg, uint32_t dlc);
+void can_node_power_status_cb(uint32_t id, uint64_t msg, uint32_t dlc);
 
 void can_node_valve_status_checksum_cb(uint32_t id, uint64_t msg, uint32_t dlc);
+void can_node_power_status_checksum_cb(uint32_t id, uint64_t msg, uint32_t dlc);
 
 void can_node_ctrl_to_valve_cb(uint32_t id, uint64_t msg, uint32_t dlc);
 

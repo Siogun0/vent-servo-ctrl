@@ -64,9 +64,9 @@ typedef struct
     uint8_t valve_status[SERVOS_NUMBER];//0x20003C38, 0x20003C39, 0x20003C3A, 0x20003C3B,..., 0x20003C3F
     uint32_t time_change_position;      //0x20003C40
     uint32_t is_servo_power_on;         //0x20003C44
-    float voltage_servo;                //0x20003C48
-    float current_servo;                //0x20003C4C
-    float power_servo;                  //0x20003C50
+    float voltage;                      //0x20003C48
+    float current;                      //0x20003C4C
+    float power;                        //0x20003C50
     uint8_t valve_drive_command[VALVE_DRIVES_NUMBER]; //0x20003C54
 
 } var_t;

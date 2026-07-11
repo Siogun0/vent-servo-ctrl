@@ -134,13 +134,18 @@ void can_node_valve_status_cb(uint32_t id, uint64_t msg, uint32_t dlc)
 {
     can_out.VALVE_STATUS.CPU_TEMP = roundf(v.CPU_temp);
     can_out.VALVE_STATUS.V_3V3 = v.VCC;
-    can_out.VALVE_STATUS.CURRENT_SUM = v.current_servo;
-    can_out.VALVE_STATUS.V_12V = v.voltage_servo;
 
     can_out.VALVE_STATUS.VALVE_1 = decode_analog_key(v.ADC[ADC_CH_0]);
     can_out.VALVE_STATUS.VALVE_2 = decode_analog_key(v.ADC[ADC_CH_1]);
     can_out.VALVE_STATUS.VALVE_3 = decode_analog_key(v.ADC[ADC_CH_2]);
     can_out.VALVE_STATUS.VALVE_4 = decode_analog_key(v.ADC[ADC_CH_3]);
+}
+
+void can_node_power_status_cb(uint32_t id, uint64_t msg, uint32_t dlc)
+{
+    can_out.POWER_STATUS.V_12V = v.voltage;
+    can_out.POWER_STATUS.I_12V = v.current;
+    can_out.POWER_STATUS.P_12V = v.power;
 }
 
 void can_node_ctrl_to_valve_cb(uint32_t id, uint64_t msg, uint32_t dlc)
@@ -303,7 +308,7 @@ int main(void)
         HAL_GPIO_WritePin(SERVO_POWER_GPIO_Port, SERVO_POWER_Pin, v.is_servo_power_on);
     }
 
-    INA219_ReadAndCulcAll(&ina219, &v.voltage_servo, &v.current_servo, &v.power_servo, param.r_shunt);
+    INA219_ReadAndCulcAll(&ina219, &v.voltage, &v.current, &v.power, param.r_shunt);
 
     can_node_valves_bus0_tx(&can_out);
     /* USER CODE END WHILE */

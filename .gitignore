@@ -5,6 +5,8 @@ MetaData
 bn.h
 personal.h
 *.prefs
+/Canape/
+!/Canape/CANape.ini
 
 # Prerequisites
 *.d

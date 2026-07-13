@@ -151,10 +151,10 @@ void can_node_power_status_cb(uint32_t id, uint64_t msg, uint32_t dlc)
 void can_node_ctrl_to_valve_cb(uint32_t id, uint64_t msg, uint32_t dlc)
 {
     uint16_t servo_us[4];
-    servo_us[0] = get_servo_us(can_in.CTRL_TO_VALVE.VALVE_1_REQ, param.servo_close_us[0], param.servo_open_us[0]);
-    servo_us[1] = get_servo_us(can_in.CTRL_TO_VALVE.VALVE_2_REQ, param.servo_close_us[1], param.servo_open_us[1]);
-    servo_us[2] = get_servo_us(can_in.CTRL_TO_VALVE.VALVE_3_REQ, param.servo_close_us[2], param.servo_open_us[2]);
-    servo_us[3] = get_servo_us(can_in.CTRL_TO_VALVE.VALVE_4_REQ, param.servo_close_us[3], param.servo_open_us[3]);
+    servo_us[0] = get_servo_us(can_in.CTRL_VALVE.VALVE_1_REQ, param.servo_close_us[0], param.servo_open_us[0]);
+    servo_us[1] = get_servo_us(can_in.CTRL_VALVE.VALVE_2_REQ, param.servo_close_us[1], param.servo_open_us[1]);
+    servo_us[2] = get_servo_us(can_in.CTRL_VALVE.VALVE_3_REQ, param.servo_close_us[2], param.servo_open_us[2]);
+    servo_us[3] = get_servo_us(can_in.CTRL_VALVE.VALVE_4_REQ, param.servo_close_us[3], param.servo_open_us[3]);
 
     if(v.servo_us[0] != servo_us[0] || v.servo_us[1] != servo_us[1] || v.servo_us[2] != servo_us[2] || v.servo_us[3] != servo_us[3])
     {

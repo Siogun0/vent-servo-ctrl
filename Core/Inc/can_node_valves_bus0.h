@@ -65,7 +65,7 @@
 
 typedef struct
 {
-    uint8_t ctrl_to_valve;
+    uint8_t ctrl_valve;
 } t_can_node_valves_bus0_input_alive;
 
 typedef struct
@@ -76,7 +76,7 @@ typedef struct
         uint8_t VALVE_2_REQ;
         uint8_t VALVE_3_REQ;
         uint8_t VALVE_4_REQ;
-    } CTRL_TO_VALVE;
+    } CTRL_VALVE;
     t_can_node_valves_bus0_input_alive alive;
 } t_can_node_valves_bus0_input;
 
@@ -108,7 +108,7 @@ typedef struct
 
 #define MBN_TX_VALVE_STATUS 0
 #define MBN_TX_POWER_STATUS 1
-#define MBN_RX_CTRL_TO_VALVE 2
+#define MBN_RX_CTRL_VALVE 2
 
 #define MBN_FIRST_BUS_0 0
 #define MBN_TOTAL_BUS_0 3
@@ -125,7 +125,7 @@ typedef void (*t_mailbox_callback)(uint32_t id, uint64_t msg, uint32_t dlc);
 
 #define MSG_CYCLE_VALVE_STATUS 100000
 #define MSG_CYCLE_POWER_STATUS 100000
-#define MSG_CYCLE_CTRL_TO_VALVE 100000
+#define MSG_CYCLE_CTRL_VALVE 100000
 
 //====== API functions ======
 void can_node_valves_bus0_tx(volatile t_can_node_valves_bus0_output *out);
@@ -147,7 +147,7 @@ void can_node_power_status_cb(uint32_t id, uint64_t msg, uint32_t dlc);
 void can_node_valve_status_checksum_cb(uint32_t id, uint64_t msg, uint32_t dlc);
 void can_node_power_status_checksum_cb(uint32_t id, uint64_t msg, uint32_t dlc);
 
-void can_node_ctrl_to_valve_cb(uint32_t id, uint64_t msg, uint32_t dlc);
+void can_node_ctrl_valve_cb(uint32_t id, uint64_t msg, uint32_t dlc);
 
 
 #endif
